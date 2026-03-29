@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layer — AI 시대, 디자이너의 눈과 손을 다시 묻는 이미지 프로그램</title>
+  <meta name="description" content="Mixboard → Blender → Nano Banana. 방향 → 구조 → 표면 → 판단. 도구가 바뀌어도 남는 디자이너의 프로세스를 배운다.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #fafafa;
+      --gray-100: #f5f5f5;
+      --gray-200: #e5e5e5;
+      --gray-400: #a3a3a3;
+      --gray-500: #737373;
+      --gray-600: #525252;
+      --gray-800: #262626;
+      --accent: #2563eb;
+      --max-width: 720px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* --- Layout --- */
+    section {
+      padding: 120px 24px;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .divider {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      border: none;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    /* --- Hero --- */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .hero-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 32px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 300;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      margin-bottom: 48px;
+      word-break: keep-all;
+    }
+
+    .hero h1 strong {
+      font-weight: 700;
+    }
+
+    .hero-sub {
+      font-size: 1.0625rem;
+      color: var(--gray-600);
+      line-height: 1.9;
+      max-width: 520px;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--gray-400);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* --- Section typography --- */
+    .section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      font-weight: 300;
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+      margin-bottom: 32px;
+      word-break: keep-all;
+    }
+
+    h2 strong {
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      margin-top: 48px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      color: var(--gray-800);
+    }
+
+    .lead {
+      font-size: 1.125rem;
+      line-height: 1.9;
+      color: var(--gray-600);
+    }
+
+    .statement {
+      font-size: 1.25rem;
+      font-weight: 400;
+      line-height: 1.7;
+      margin: 48px 0;
+      padding-left: 24px;
+      border-left: 2px solid var(--black);
+    }
+
+    /* --- Pipeline --- */
+    .pipeline {
+      background: var(--gray-100);
+      border-radius: 0;
+      padding: 120px 24px;
+      max-width: 100%;
+    }
+
+    .pipeline-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .pipeline-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 48px 0;
+    }
+
+    .pipeline-step {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--gray-200);
+      align-items: start;
+    }
+
+    .pipeline-step:last-child {
+      border-bottom: none;
+    }
+
+    .step-tool {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .step-label {
+      font-size: 0.8125rem;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    .step-desc {
+      font-size: 0.9375rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    .pipeline-arrow {
+      text-align: center;
+      color: var(--gray-400);
+      font-size: 1.25rem;
+      padding: 8px 0;
+    }
+
+    /* --- Curriculum --- */
+    .act-header {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+      margin-top: 64px;
+    }
+
+    .act-header:first-of-type {
+      margin-top: 48px;
+    }
+
+    .act-title {
+      font-size: 1.375rem;
+      font-weight: 400;
+      margin-bottom: 40px;
+    }
+
+    .week {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .week:last-child {
+      border-bottom: none;
+    }
+
+    .week-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 8px;
+    }
+
+    .week-title {
+      font-size: 1.0625rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .week-quote {
+      font-size: 0.9375rem;
+      color: var(--gray-500);
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+
+    .week-desc {
+      font-size: 0.9375rem;
+      color: var(--gray-600);
+      line-height: 1.8;
+    }
+
+    .week-output {
+      font-size: 0.8125rem;
+      color: var(--gray-500);
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .week-output strong {
+      color: var(--gray-800);
+      font-weight: 500;
+    }
+
+    /* --- Beliefs --- */
+    .belief {
+      margin-bottom: 48px;
+    }
+
+    .belief-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--gray-400);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .belief h3 {
+      margin-top: 0;
+      font-size: 1.0625rem;
+    }
+
+    .belief p {
+      font-size: 0.9375rem;
+      color: var(--gray-600);
+    }
+
+    /* --- Info table --- */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin: 48px 0;
+    }
+
+    .info-item {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .info-item:nth-child(odd) {
+      padding-right: 24px;
+      border-right: 1px solid var(--gray-200);
+    }
+
+    .info-item:nth-child(even) {
+      padding-left: 24px;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 6px;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--black);
+    }
+
+    /* --- Remains --- */
+    .remains-list {
+      list-style: none;
+      margin: 48px 0;
+    }
+
+    .remains-list li {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--gray-200);
+      font-size: 1rem;
+    }
+
+    .remains-list li strong {
+      font-weight: 500;
+    }
+
+    .remains-list li span {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* --- CTA --- */
+    .cta-section {
+      text-align: center;
+      padding: 160px 24px;
+    }
+
+    .cta-section h2 {
+      margin-bottom: 16px;
+    }
+
+    .cta-section .lead {
+      margin-bottom: 48px;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      padding: 16px 48px;
+      background: var(--black);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      transition: background 0.2s;
+    }
+
+    .cta-btn:hover {
+      background: var(--gray-800);
+    }
+
+    .cta-note {
+      font-size: 0.8125rem;
+      color: var(--gray-400);
+      margin-top: 20px;
+    }
+
+    /* --- Footer --- */
+    footer {
+      padding: 48px 24px;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      border-top: 1px solid var(--gray-200);
+      font-size: 0.8125rem;
+      color: var(--gray-400);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer a {
+      color: var(--gray-500);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--black);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 640px) {
+      section {
+        padding: 80px 20px;
+      }
+
+      .pipeline {
+        padding: 80px 20px;
+      }
+
+      .pipeline-step {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .info-item:nth-child(odd) {
+        padding-right: 0;
+        border-right: none;
+      }
+
+      .info-item:nth-child(even) {
+        padding-left: 0;
+      }
+
+      .cta-section {
+        padding: 100px 20px;
+      }
+
+      .hero {
+        min-height: 85vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">Program</div>
+    <h1>
+      AI 시대,<br>
+      디자이너의 <strong>눈</strong>과 <strong>손</strong>을<br>
+      다시 묻는 이미지 프로그램.
+    </h1>
+    <p class="hero-sub">
+      프롬프트 한 줄이면 이미지 100장이 쏟아진다.<br>
+      그러나 그 100장 중에서 1장을 고르는 것은<br>
+      여전히 사람의 일이다.
+    </p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Question -->
+  <section>
+    <div class="section-label">Question</div>
+    <h2>AI가 이미지를 만드는 시대에<br>디자이너는 <strong>무엇을 하는가.</strong></h2>
+    <p class="lead">
+      도구는 매 분기 바뀐다. 작년의 Midjourney는 올해의 Nano Banana가 되었고,
+      내년에는 또 다른 이름이 그 자리를 차지할 것이다.
+    </p>
+    <p class="lead">
+      그러나 좋은 이미지를 가려내는 감각, 의도를 시각으로 번역하는 능력,
+      만들고 부수고 다시 만드는 태도 — 이것은 도구가 바뀌어도 남는다.
+    </p>
+    <div class="statement">
+      이 프로그램은 도구 사용법을 가르치지 않는다.<br>
+      <strong>보는 눈을 세우고, 만드는 손을 단련한다.</strong>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Beliefs -->
+  <section>
+    <div class="section-label">Beliefs</div>
+    <h2>무엇을 <strong>믿는가</strong></h2>
+
+    <div class="belief">
+      <div class="belief-num">01</div>
+      <h3>디자이너의 눈은 AI 이전에 존재했고, 이후에도 남는다</h3>
+      <p>
+        AI는 이미지를 생성하지만 판단하지 않는다.
+        "이 시안이 이 브랜드에 맞는가", "이 구도가 이 맥락에서 작동하는가"를
+        결정하는 것은 시각적 훈련을 거친 사람의 몫이다.
+      </p>
+    </div>
+
+    <div class="belief">
+      <div class="belief-num">02</div>
+      <h3>만들지 않으면 알 수 없다</h3>
+      <p>
+        좋은 시안은 머릿속에서 나오지 않는다.
+        빠르게 만들고, 냉정하게 보고, 거침없이 부수고, 다시 만드는 반복 속에서 나온다.
+        우리는 한 번에 완성하려 하지 않는다. 우리는 반복한다.
+      </p>
+    </div>
+
+    <div class="belief">
+      <div class="belief-num">03</div>
+      <h3>파이프라인은 사고의 순서다</h3>
+      <p>
+        "아이디에이션 → 형태 → 최종 이미지"는 단순한 작업 순서가 아니다.
+        "무엇을 만들 것인가 → 어떤 형태인가 → 어떻게 보여줄 것인가"라는
+        사고의 순서다. 도구는 그 사고를 실행하는 매체일 뿐이다.
+      </p>
+    </div>
+  </section>
+
+  <!-- Pipeline -->
+  <div class="pipeline">
+    <div class="pipeline-inner">
+      <div class="section-label">Pipeline</div>
+      <h2><strong>방향 → 구조 → 표면 → 판단.</strong><br>사고의 순서를 따른다.</h2>
+
+      <div class="pipeline-flow">
+        <div class="pipeline-step">
+          <div>
+            <div class="step-tool">Mixboard</div>
+            <div class="step-label">방향</div>
+          </div>
+          <div class="step-desc">
+            무엇을 만들 것인가. 브랜드 키워드에서 시각적 방향을 도출한다.
+            텍스트 프롬프트로 무드보드를 생성하고, 자연어로 편집한다.
+          </div>
+        </div>
+
+        <div class="pipeline-step">
+          <div>
+            <div class="step-tool">Blender</div>
+            <div class="step-label">구조</div>
+          </div>
+          <div class="step-desc">
+            어떤 형태인가. AI에게 형태를 맡기면 AI가 해석한다.
+            형태를 잡아주면 디자이너가 해석한다. 자연어로 3D 모델을 만들고, 구도를 잡는다.
+          </div>
+        </div>
+
+        <div class="pipeline-step">
+          <div>
+            <div class="step-tool">Nano Banana</div>
+            <div class="step-label">표면</div>
+          </div>
+          <div class="step-desc">
+            어떻게 보여줄 것인가. 블렌더가 뼈를 잡았다면, 나노바나나는 살을 입힌다.
+            같은 모델에 다른 빛, 다른 재질, 다른 분위기를 입힌다.
+          </div>
+        </div>
+
+        <div class="pipeline-step">
+          <div>
+            <div class="step-tool">디자이너</div>
+            <div class="step-label">판단</div>
+          </div>
+          <div class="step-desc">
+            이것이 맞는가. 100장 중 1장을 고르는 것.
+            그리고 왜 그 1장인지 설명할 수 있는 것. 그것이 디자이너의 일이다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Curriculum -->
+  <section>
+    <div class="section-label">Curriculum</div>
+    <h2>6주. <strong>두 개의 막.</strong></h2>
+    <p class="lead">
+      매 회차는 동일한 리듬을 따른다.<br>
+      See — Make — Break & Rebuild — My Work.
+    </p>
+
+    <div class="act-header">Act 1</div>
+    <div class="act-title">눈을 세우고, 도구를 익힌다</div>
+
+    <div class="week">
+      <div class="week-num">Week 1</div>
+      <div class="week-title">방향을 잡는 눈 — 아이디에이션</div>
+      <div class="week-quote">"100장을 만들기 전에, 어떤 1장을 만들 것인지 먼저 묻는다."</div>
+      <div class="week-desc">
+        브랜드 키워드에서 시각적 방향으로의 번역. 좋은 무드보드와 나쁜 무드보드의 구조적 차이.
+        Mixboard로 3가지 시각적 방향을 도출한다.
+      </div>
+      <div class="week-output"><strong>결과물</strong> — 브랜드 무드보드 3방향</div>
+    </div>
+
+    <div class="week">
+      <div class="week-num">Week 2</div>
+      <div class="week-title">형태를 잡는 손 — 3D 모델링</div>
+      <div class="week-quote">"AI에게 형태를 맡기면 AI가 해석한다. 형태를 잡아주면 디자이너가 해석한다."</div>
+      <div class="week-desc">
+        왜 이미지 생성 전에 3D 단계가 필요한가. 형태와 표면의 분리.
+        Blender + Claude Code로 자연어 3D 모델링을 배운다.
+      </div>
+      <div class="week-output"><strong>결과물</strong> — 브랜드 제품 3D 모델 1종 + 3앵글 렌더</div>
+    </div>
+
+    <div class="week">
+      <div class="week-num">Week 3</div>
+      <div class="week-title">표면을 입히는 기술 — 최종 렌더</div>
+      <div class="week-quote">"블렌더가 뼈를 잡았다면, 나노바나나는 살을 입힌다."</div>
+      <div class="week-desc">
+        같은 3D 모델에 다른 텍스처, 조명, 배경을 입힌다.
+        Nano Banana로 포토리얼 렌더샷을 완성한다.
+      </div>
+      <div class="week-output"><strong>결과물</strong> — 제품 포토리얼 렌더샷 5종</div>
+    </div>
+
+    <div class="act-header">Act 2</div>
+    <div class="act-title">만들고, 부수고, 다시 만든다</div>
+
+    <div class="week">
+      <div class="week-num">Week 4</div>
+      <div class="week-title">Sprint #1 — 브랜드 런칭 이미지</div>
+      <div class="week-desc">
+        신규 브랜드의 런칭 이미지 세트를 2시간 안에 만든다.
+        무드보드부터 로고 시뮬레이션까지. 그룹 크리틱. 즉석 수정.
+      </div>
+      <div class="week-output"><strong>결과물</strong> — 컨셉 이미지 3장 + 로고 시뮬레이션 3종</div>
+    </div>
+
+    <div class="week">
+      <div class="week-num">Week 5</div>
+      <div class="week-title">Sprint #2 — 제품 상세페이지</div>
+      <div class="week-desc">
+        제품 하나의 상세페이지 이미지 세트를 만든다.
+        헤더, 특징 컷, 라이프스타일 컷, 텍스트 삽입 이미지까지.
+      </div>
+      <div class="week-output"><strong>결과물</strong> — 상세페이지 이미지 풀 세트</div>
+    </div>
+
+    <div class="week">
+      <div class="week-num">Week 6</div>
+      <div class="week-title">Sprint #3 — 나의 프로젝트</div>
+      <div class="week-desc">
+        브리프는 없다. 각자 자신의 실무 프로젝트를 가져온다.
+        6주간 익힌 눈과 손과 파이프라인으로, 자신의 과제를 처음부터 끝까지 풀어낸다.
+      </div>
+      <div class="week-output"><strong>결과물</strong> — 본인 실무 프로젝트 풀 이미지 세트</div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- For whom -->
+  <section>
+    <div class="section-label">For Whom</div>
+    <h2><strong>디자인을 전공</strong>했고<br><strong>실무를 하고 있는</strong> 사람.</h2>
+    <p class="lead">
+      좋은 이미지가 무엇인지는 알지만,
+      AI 도구로 그것을 빠르게 실현하는 방법은
+      아직 자기 것으로 만들지 못한 사람.
+    </p>
+    <p class="lead">
+      도구 튜토리얼이 아닌, 자신의 디자인 판단력 위에
+      새로운 생산 방식을 얹고 싶은 사람.
+    </p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Info -->
+  <section>
+    <div class="section-label">Details</div>
+    <h2><strong>운영</strong></h2>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">Duration</div>
+        <div class="info-value">6주, 주 1회</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Time</div>
+        <div class="info-value">회당 2시간</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Size</div>
+        <div class="info-value">4 ~ 8인</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Format</div>
+        <div class="info-value">오프라인 소그룹</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Structure</div>
+        <div class="info-value">공통 수업 + 개별 피드백</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Requirement</div>
+        <div class="info-value">디자인 전공 + 실무 경험</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- What remains -->
+  <section>
+    <div class="section-label">What Remains</div>
+    <h2>6주 후에 <strong>남는 것</strong></h2>
+    <p class="lead">
+      도구는 바뀔 것이다.
+      Nano Banana는 다른 이름이 될 수도 있고,
+      Mixboard는 다른 형태가 될 수도 있다.
+    </p>
+    <p class="lead">
+      그러나 이것은 남는다.
+    </p>
+
+    <ul class="remains-list">
+      <li>
+        <strong>보는 눈</strong>
+        <span>AI가 만든 100장 중 1장을 고르는 판단력</span>
+      </li>
+      <li>
+        <strong>만드는 태도</strong>
+        <span>빠르게 만들고, 냉정하게 보고, 거침없이 부수고, 다시 만드는 반복</span>
+      </li>
+      <li>
+        <strong>사고의 순서</strong>
+        <span>방향 → 구조 → 표면 → 판단. 어떤 도구 위에서든 작동하는 프로세스</span>
+      </li>
+      <li>
+        <strong>속도</strong>
+        <span>컨셉에서 최종 이미지까지, 2시간 안에 도달하는 실행력</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="section-label">Apply</div>
+    <h2><strong>1기</strong> 수강생 모집</h2>
+    <p class="lead">일정과 세부사항은 문의를 통해 안내드립니다.</p>
+    <a href="mailto:hello@example.com" class="cta-btn">문의하기</a>
+    <p class="cta-note">소수 인원으로 운영되며, 선착순 마감됩니다.</p>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>Layer (가제) — 2026</span>
+    <a href="mailto:hello@example.com">Contact</a>
+  </footer>
+
+</body>
+</html>
